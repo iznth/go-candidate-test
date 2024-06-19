@@ -1,0 +1,13 @@
+stages:
+    - make
+
+make zip:
+    stage: make
+    script:
+        - zip -r greystone_assessment.zip questions/ go.* README.pdf
+    artifacts:
+        paths:
+            - greystone_assessment.zip
+    tags:
+        - shell
+

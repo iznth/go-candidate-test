@@ -1,0 +1,67 @@
+name: Deploy Ryts
+
+on:
+  # Runs on pushes targeting the default branch
+  push:
+    branches: [master]
+
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch: 
+
+jobs:
+  answers: 
+    defaults:
+      run:
+        working-directory: webapp
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4  
+      - uses: actions/setup-go@v5
+        with:
+          go-version: '^1.13.1' # The Go version to download (if necessary) and use.
+      - run: go version 
+      - name: Get dependencies
+        run: |
+          go get -v -t -d ./...        
+
+      - name: Build
+        env:
+          GOPROXY: "https://proxy.golang.org"
+        run: go build .
+
+      - name: Test
+        run: go test -v .
+
+  
+  webapp: 
+    defaults:
+      run:
+        working-directory: webapp
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4  
+      - uses: actions/setup-go@v5
+        with:
+          go-version: '^1.13.1' # The Go version to download (if necessary) and use.
+      - run: go version
+      - name: Get dependencies
+        run: |
+          go get -v -t -d ./...        
+
+      - name: Build Test
+        env:
+          GOPROXY: "https://proxy.golang.org"
+        run: go build .
+
+      - name: Test
+        env: 
+          AUTH0_DOMAIN: '{yourDomain}' 
+          AUTH0_CLIENT_ID: '{yourClientId}' 
+          AUTH0_CLIENT_SECRET: '{yourClientSecret}' 
+          AUTH0_CALLBACK_URL: 'http://localhost:3000/callback'
+        run: go test -v .
+      
+      - name: Build Docker
+        run: 
