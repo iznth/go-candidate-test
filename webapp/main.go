@@ -28,12 +28,12 @@ const (
 
 // model struct
 type profile struct {
-	Age                      int16  `json:"age,omitempty" validate:"omitempty,gte=0,lte=130"`
-	Name                     string `json:"name,omitempty" validate:"omitempty,min=3,max=32"`
-	Email                    string `json:"email,omitempty" validate:"omitempty,email,min=3,max=100"`
-	FavouriteColor           string `json:"favcolor,omitempty" validate:"omitempty,min=3,max=50"`
-	FavouriteOperatingSystem string `json:"favos,omitempty" validate:"omitempty,min=3,max=20"`
-	Password                 string `json:"password,omitempty" validate:"omitempty,min=10,max=32"`
+	Age                      int16  `form:"age" json:"age,omitempty" validate:"omitempty,gte=0,lte=130"`
+	Name                     string `form:"name" json:"name,omitempty" validate:"omitempty,min=3,max=32"`
+	Email                    string `form:"email" json:"email,omitempty" validate:"omitempty,email,min=3,max=100"`
+	FavouriteColor           string `form:"favcolor" json:"favcolor,omitempty" validate:"omitempty,min=3,max=50"`
+	FavouriteOperatingSystem string `form:"favos" json:"favos,omitempty" validate:"omitempty,min=3,max=20"`
+	Password                 string `form:"password" json:"password,omitempty" validate:"omitempty,min=10,max=32"`
 }
 
 type request profile
@@ -263,15 +263,23 @@ func NewDemoApp() *App {
 						Unique:  false,
 						Indexer: &memdb.IntFieldIndex{Field: "Age"},
 					},
+					"name": &memdb.IndexSchema{
+						Name:         "name",
+						Unique:       false,
+						Indexer:      &memdb.StringFieldIndex{Field: "Name"},
+						AllowMissing: true,
+					},
 					"favcolor": &memdb.IndexSchema{
-						Name:    "favcolor",
-						Unique:  false,
-						Indexer: &memdb.StringFieldIndex{Field: "FavouriteColor"},
+						Name:         "favcolor",
+						Unique:       false,
+						Indexer:      &memdb.StringFieldIndex{Field: "FavouriteColor"},
+						AllowMissing: true,
 					},
 					"favos": &memdb.IndexSchema{
-						Name:    "favos",
-						Unique:  false,
-						Indexer: &memdb.StringFieldIndex{Field: "FavouriteOperatingSystem"},
+						Name:         "favos",
+						Unique:       false,
+						Indexer:      &memdb.StringFieldIndex{Field: "FavouriteOperatingSystem"},
+						AllowMissing: true,
 					},
 				},
 			},
@@ -336,8 +344,12 @@ func main() {
 			ctx.HTML(http.StatusOK, "profile.html", nil)
 		})
 
-		profileGroup.DELETE("/", app.DeleteProfileHandler())
-		profileGroup.POST("/", app.UpdateProfileHandler())
+		// profileGroup.POST("/", func(ctx *gin.Context) {
+		// 	ctx.HTML(http.StatusOK, "profile.html", nil)
+		// })
+
+		profileGroup.DELETE("/delete", app.DeleteProfileHandler())
+		profileGroup.POST("/update", app.UpdateProfileHandler())
 
 		// logout
 		profileGroup.POST("/logout", app.LogoutHandler())

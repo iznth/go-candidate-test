@@ -3,6 +3,7 @@ ARG USER_UID=1000
 ARG USER_GID=$USER_UID 
 ARG DEBIAN_VERSION=bullseye
 ARG GO_VERSION=1.22
+ARG NODEJS_VERSION=22
 ARG GOMODIFYTAGS_VERSION=v1.16.0
 ARG GOPLAY_VERSION=v1.0.0
 ARG GOTESTS_VERSION=v1.6.0
@@ -38,6 +39,8 @@ FROM iznth/binbase:stern-${STERN_VERSION} AS stern
 FROM iznth/binbase:kubectx-${KUBECTX_VERSION} AS kubectx
 FROM iznth/binbase:kubens-${KUBENS_VERSION} AS kubens
 FROM iznth/binbase:helm-${HELM_VERSION} AS helm
+FROM node:${NODEJS_VERSION}-${DEBIAN_VERSION}-slim AS nodejs
+
 
 
 FROM iznth/baseddevcontainer:debian as base
@@ -50,12 +53,8 @@ LABEL \
     org.opencontainers.image.authors="brad@izn.ai" \
     org.opencontainers.image.created=$CREATED \
     org.opencontainers.image.version=$VERSION \
-    org.opencontainers.image.revision=$COMMIT \
-    org.opencontainers.image.url="https://github.com/iznth/godevcontainer" \
-    org.opencontainers.image.documentation="https://github.com/iznth/godevcontainer" \
-    org.opencontainers.image.source="https://github.com/iznth/godevcontainer" \
-    org.opencontainers.image.title="Go Dev container Debian" \
-    org.opencontainers.image.description="Go development container for Visual Studio Code Remote Containers development"
+    org.opencontainers.image.revision=$COMMIT 
+
 COPY --from=go /usr/local/go /usr/local/go
 ENV GOPATH=/go
 ENV PATH=$GOPATH/bin:/usr/local/go/bin:$PATH \
@@ -67,7 +66,7 @@ RUN apt-get update && \
     apt-get install -y --no-install-recommends g++ wget && \
     apt-get autoremove -y && \
     apt-get clean -y && \
-    rm -r /var/cache/* /var/lib/apt/lists/* 
+    rm -r /var/cache/* /var/lib/apt/lists/*
 
 COPY --from=gomodifytags /bin /go/bin/gomodifytags
 COPY --from=goplay  /bin /go/bin/goplay
@@ -81,6 +80,10 @@ COPY --from=golangci-lint /bin /go/bin/golangci-lint
 COPY --from=impl /bin /go/bin/impl
 COPY --from=gopkgs /bin /go/bin/gopkgs
 
+# NODEJS
+COPY --from=nodejs /usr/local/bin /usr/local/bin
+COPY --from=nodejs /usr/local/lib/node_modules /usr/local/lib/node_modules
+
 # Extra binary tools
 COPY --from=kubectl /bin /usr/local/bin/kubectl
 COPY --from=stern /bin /usr/local/bin/stern
@@ -88,13 +91,14 @@ COPY --from=kubectx /bin /usr/local/bin/kubectx
 COPY --from=kubens /bin /usr/local/bin/kubens
 COPY --from=helm /bin /usr/local/bin/helm
 
+
 FROM base as dev
 
 # # Create the user
 # RUN groupadd --gid $USER_GID $USERNAME
 # RUN useradd --uid $USER_UID --gid $USER_GID -m $USERNAME
 # #
-# # [Optional] Add sudo support. Omit if you don't need to install software after connecting.
+# # [Optional] Add sudo support/ Omit if you don't need to install software after connecting.
 # RUN apt-get update \
 #     && apt-get install -y sudo
 # RUN echo $USERNAME ALL=\(root\) NOPASSWD:ALL > /etc/sudoers.d/$USERNAME

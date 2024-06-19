@@ -26,34 +26,38 @@
 					<li>FavoriteColor: {{.favcolor}}</li>
 					<li>FavoriteOperatingSystem: {{.favos}}</li>
 				</ul>
-				<a id="qsLogoutBtn" class="btn btn-primary btn-lg btn-logout btn-block"
-					href="/profile/logout">Logout</a>
+				<form action="/profile/logout" method="post" name="logoutForm">
+					<input type="submit" id="qsLogoutBtn"
+						class="btn btn-primary btn-lg btn-logout btn-block">Logout</input>
+					<br /><br />
+				</form>
 				<br><br />
 				<h2>Update Form</h2>
 				<p>Please enter the desired values for your profile description in the input fields below and click
 					submit to update it
 				</p>
-				<form action="/profile" method="post" name="updateForm">
+				<form action="/profile/update" method="post" name="updateForm">
 					<div>
+						<input type="text" placeholder="Your name" name="name"></input>
 						<input type="text" placeholder="Integer of your age in years" name="age"></input>
 						<input type="text" placeholder="Favorite color i.e. red, green, blue etc."
 							name="favcolor"></input>
 						<input type="text" placeholder="Favorite operating system i.e. popos" name="favos"></input>
 					</div>
 					<br /><br />
-					<input type="submit"></input>
+					<input type="submit">Update</input>
 					<br /><br />
 				</form>
 				<br><br />
 				<h2>Update Form</h2>
 				<p>please enter your password (for verification) below and click submit to delete your profile.</p>
-				<form action="/profile" method="delete" name="deleteForm">
+				<form action="/profile/delete" method="delete" name="deleteForm">
 					<br /><br />
 					<div>
 						<input type="password" placeholder="Password" name="password"></input>
 					</div>
 					<br /><br />
-					<input type="submit"></input>
+					<input type="submit">Delete</input>
 					<br /><br />
 				</form>
 			</div>

@@ -11,7 +11,7 @@ services:
       # On Linux and OSX, a symlink /mnt/ssh <-> ~/.ssh is
       # created in the container. On Windows, files are copied
       # from /mnt/ssh to ~/.ssh to fix permissions.
-      - ~/.ssh:/mnt/ssh  
+      # - ~/.ssh:/mnt/ssh  
     environment:
       - TZ=
     cap_add:

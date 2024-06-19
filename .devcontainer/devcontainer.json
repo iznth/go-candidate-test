@@ -29,13 +29,14 @@
                 "redhat.vscode-yaml", // Kubernetes, Drone syntax highlighting
                 "bajdzis.vscode-database", // Supports connections to mysql or postgres, over SSL, socked
                 "IBM.output-colorizer", // Colorize your output/test logs
-                "github.copilot" // AI code completion
-                // "mohsen1.prettify-json", // Prettify JSON data
-                // "zxh404.vscode-proto3", // Supports Proto syntax
-                // "jrebocho.vscode-random", // Generates random values
-                // "alefragnani.Bookmarks", // Manage bookmarks
-                // "quicktype.quicktype", // Paste JSON as code
-                // "spikespaz.vscode-smoothtype", // smooth cursor animation
+                "github.copilot", // AI code completion
+                "esbenp.prettier-vscode", // Prettier code formatter
+                "bierner.color-info", // JSX and CSS color information
+                "jpoissonnier.vscode-styled-components", // Styled components
+                "visualstudioexptteam.vscodeintellicode", // AI-assisted development
+                "eg2.vscode-npm-script", // NPM support for VS code
+                "christian-kohler.npm-intellisense", // Autocompletes npm modules in import statements
+                "cssho.vscode-svgviewer" // SVG viewer
             ],
             "settings": {
                 "files.eol": "\n",
